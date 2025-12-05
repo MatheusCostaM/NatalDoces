@@ -110,7 +110,9 @@ const HeaderDiv = styled.div`
 
   @media (max-width: 768px) {
     width: 100vw !important;
+    height: 55vh;
   }
+
 `;
 
 const LogoDiv = styled.div`
