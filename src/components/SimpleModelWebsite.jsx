@@ -13,7 +13,6 @@ const SimpleWebsiteDiv = styled.div`
   font-weight: 400;
 `;
 
-
 const shine = keyframes`
   from { background-position: 200%; }
   to   { background-position: -200%; }
@@ -69,16 +68,15 @@ const LinksImg = styled.div`
   mask-repeat: no-repeat;
   mask-position: center;
   cursor: pointer;
-  &:hover { transform: scale(1.1); } 
-  &:active { background: ${(props) => props.$color || text.cor}80; transform: scale(0.9); } 
+  &:hover { transform: scale(1.1); }
+  &:active { background: ${(props) => props.$color || text.cor}80; transform: scale(0.9); }
 `;
-
 
 const Cursive = styled.h1`
   font-size: clamp(
-    ${(props) => props.$size * 1.3}vh,   
-    ${(props) => props.$size}vw,      
-    ${(props) => props.$size * 1.5}vw 
+    ${(props) => props.$size * 1.3}vh,
+    ${(props) => props.$size}vw,
+    ${(props) => props.$size * 1.5}vw
   );
   font-family: "Charm", cursive;
   font-weight: 700;
@@ -90,9 +88,9 @@ const Cursive = styled.h1`
 
 const Serif = styled.h1`
   font-size: clamp(
-    ${(props) => props.$size * 1.5}vh,  
-    ${(props) => props.$size}vw,      
-    ${(props) => props.$size * 1.5}vw 
+    ${(props) => props.$size * 1.5}vh,
+    ${(props) => props.$size}vw,
+    ${(props) => props.$size * 1.5}vw
   );
   font-family: "Charm", cursive;
   font-weight: 400;
@@ -132,20 +130,21 @@ const LogoDiv = styled.div`
 `;
 
 const Button = styled.button`
-  border-radius: 20px; 
-  background: ${(props) => props.$color || text.cor}; 
-  border: none; color: ${(props) => props.$text || "white"}; 
-  outline: none; 
-  cursor: pointer; 
-  width: fit-content; 
-  transition: 0.2s ease; 
+  border-radius: 20px;
+  background: ${(props) => props.$color || text.cor};
+  border: none;
+  color: ${(props) => props.$text || "white"};
+  outline: none;
+  cursor: pointer;
+  width: fit-content;
+  transition: 0.2s ease;
   filter: drop-shadow( 2px 2px 2px rgb(0,0,0,0.3));
   margin-bottom: 20px;
 
-  &:hover { transform: scale(1.02); } 
-  &:active { background: ${(props) => props.$color || text.cor}80; transform: scale(0.98); } 
-  &:focus { outline: none; box-shadow: none; } 
-  -webkit-tap-highlight-color: transparent; 
+  &:hover { transform: scale(1.02); }
+  &:active { background: ${(props) => props.$color || text.cor}80; transform: scale(0.98); }
+  &:focus { outline: none; box-shadow: none; }
+  -webkit-tap-highlight-color: transparent;
   &::-moz-focus-inner { border: 0; } ;
   ${(props) => props.$color === "white" ? "" : gold};
 
@@ -154,7 +153,6 @@ const Button = styled.button`
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-
 `;
 
 const ScrollWrapper = styled.div`
@@ -185,16 +183,17 @@ const ScrollItems = styled.div`
   align-items: center;
 
   @media (max-width: 768px) {
-    width: 100vw !important;
-    gap: 20px;
+    -webkit-overflow-scrolling: auto !important;
+    overscroll-behavior-x: none;
+    /* keep overflow visible so user can drag; auto-scroll will also work */
   }
 `;
 
 const Item = styled.div`
   flex: 0 0 auto;
-  width: 15vw;
+  width: 16vw;
   min-width: 20vh;
-  height: 15vw;
+  height: 16vw;
   min-height: 20vh;
   border-radius: 15px;
   background-image: url(${props => props.$img});
@@ -202,13 +201,13 @@ const Item = styled.div`
   background-position: center;
   cursor: pointer;
 
-  &:hover { 
-  transform: scale(1.02);
-   } 
-  &:active { 
-  opacity: 0.8;
-  transform: scale(0.98);
-  } 
+  &:hover {
+    transform: scale(1.02);
+  }
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
 `;
 
 const Arrow = styled.div`
@@ -235,9 +234,7 @@ const ContactInfo = styled.div`
   @media (max-width: 768px) {
     width: 100vw !important;
   }
-
 `;
-
 
 const Info = styled.div`
   width: 30vw;
@@ -296,7 +293,6 @@ const Sair = styled.div`
   width: 80%;
 `;
 
-// --- Flocos animados (mantidos) ---
 const cair = keyframes` from { top: 0%; } to { top: 100%; } `;
 const girar = (scale) => keyframes` from { transform: scale(${scale}) rotate(0deg); } to { transform: scale(${scale}) rotate(360deg); } `;
 const FlocoAnimado = styled.div`
@@ -326,84 +322,86 @@ const Links = styled.div`
   margin: 5px;
 `;
 
-// --- Componente ---
 const SimpleWebsite = () => {
-
   const scrollRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
-  
   const [mobile, setMobile] = useState(false);
 
-  const listaDuplicada = [...doces, ...doces]; // loop infinito
-  const itemWidth = window.innerWidth * 0.15 + 26; // largura do item + gap
+  const listaDuplicada = [...doces, ...doces];
   const totalOriginal = doces.length;
 
   let width = activeItem === null ? 100 : 70;
-  
+
+  const getItemWidth = () => {
+    if (!scrollRef.current) return 0;
+    const item = scrollRef.current.children[0];
+    if (!item) return 0;
+
+    const style = window.getComputedStyle(scrollRef.current);
+    const gapStr = style.gap || style.columnGap || '0px';
+    const gap = parseInt(gapStr, 10) || 0;
+
+    return item.offsetWidth + gap;
+  };
+
+  // Desktop auto scroll (unchanged behaviour)
   useEffect(() => {
-    if(!mobile){
-    const interval = setInterval(scrollRight, 4000);
+    let time = mobile ? 1000 : 4000
+    const interval = setInterval(scrollRight, time);
     return () => clearInterval(interval);
-    }
   }, [mobile]);
 
+  
+
   const scrollRight = () => {
-  if (!scrollRef.current) return;
-  const scroll = scrollRef.current;
+    if (!scrollRef.current) return;
+    const scroll = scrollRef.current;
 
-  const maxScroll = itemWidth * totalOriginal;
+    const itemWidth = getItemWidth();
+    if (!itemWidth) return;
 
-  if (scroll.scrollLeft + itemWidth >= maxScroll) {
-    // animação para o primeiro item da segunda lista
-    scroll.scrollTo({
-      left: scroll.scrollLeft + itemWidth,
-      behavior: 'smooth',
-    });
+    const maxScroll = itemWidth * totalOriginal;
 
-    // depois da animação, reset instantâneo para a primeira lista
-    setTimeout(() => {
+    if (scroll.scrollLeft + itemWidth >= maxScroll) {
+      scroll.scrollTo({ left: scroll.scrollLeft + itemWidth, behavior: 'smooth' });
+
+      setTimeout(() => {
+        scroll.style.scrollBehavior = 'auto';
+        scroll.scrollLeft = scroll.scrollLeft - maxScroll;
+        scroll.style.scrollBehavior = 'smooth';
+      }, 300);
+    } else {
+      scroll.scrollTo({ left: scroll.scrollLeft + itemWidth, behavior: 'smooth' });
+    }
+  };
+
+  const scrollLeft = () => {
+    if (!scrollRef.current) return;
+    const scroll = scrollRef.current;
+
+    const itemWidth = getItemWidth();
+    if (!itemWidth) return;
+
+    if (scroll.scrollLeft <= 0) {
       scroll.style.scrollBehavior = 'auto';
-      scroll.scrollLeft = scroll.scrollLeft - maxScroll; // move para a primeira lista
+      scroll.scrollLeft = itemWidth * totalOriginal;
       scroll.style.scrollBehavior = 'smooth';
-    }, 300); // 300ms = duração da transição
-  } else {
-    scroll.scrollTo({
-      left: scroll.scrollLeft + itemWidth,
-      behavior: 'smooth',
-    });
-  }
-};
-
-
-const scrollLeft = () => {
-  if (!scrollRef.current) return;
-  const scroll = scrollRef.current;
-
-  if (scroll.scrollLeft <= 0) {
-    // reset para o final da primeira lista
-    scroll.style.scrollBehavior = 'auto';
-    scroll.scrollLeft = itemWidth * totalOriginal;
-    scroll.style.scrollBehavior = 'smooth';
-  } else {
-    scroll.scrollTo({
-      left: scroll.scrollLeft - itemWidth,
-      behavior: 'smooth',
-    });
-  }
-};
+    } else {
+      scroll.scrollTo({ left: scroll.scrollLeft - itemWidth, behavior: 'smooth' });
+    }
+  };
 
   const particulas = Array.from({ length: 15 }, () => {
-    const left = Math.random() * 100; 
+    const left = Math.random() * 100;
     const top = Math.random() * 100;
     const scale = (Math.random() * 0.7 + 0.3).toFixed(2);
     return [left, top, scale];
   });
 
-
   useEffect(() => {
-    const handleResize = () => setMobile(window.innerWidth <= 768); // define breakpoint mobile
-    handleResize(); // verifica na primeira renderização
-    window.addEventListener('resize', handleResize); // atualiza ao redimensionar
+    const handleResize = () => setMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -415,24 +413,24 @@ const scrollLeft = () => {
 
       {activeItem != null && (
         <>
-        <Info>
-          <Sair onClick={() => setActiveItem(null)}>✖</Sair>
-          <Cursive $size={2} $color="white">{doces[activeItem].title}</Cursive>
-          <Moldura $img={doces[activeItem].img} />
-          <Serif $size={1.5} $color="white">{doces[activeItem].text}</Serif>
-          <a href={doces[activeItem].link} target="_blank">
-            <Button $color="white" $text={text.cor}>{text.textbutton}</Button>
-          </a>
-        </Info>
-        <InfoMobile>
-          <Sair onClick={() => setActiveItem(null)}>✖</Sair>
-          <Cursive $size={2} $color="white">{doces[activeItem].title}</Cursive>
-          <Moldura $img={doces[activeItem].img} />
-          <Serif $size={1.5} $color="white">{doces[activeItem].text}</Serif>
-          <a href={doces[activeItem].link} target="_blank">
-            <Button $color="white" $text={text.cor}>{text.textbutton}</Button>
-          </a>
-        </InfoMobile>
+          <Info>
+            <Sair onClick={() => setActiveItem(null)}>✖</Sair>
+            <Cursive $size={2} $color="white">{doces[activeItem].title}</Cursive>
+            <Moldura $img={doces[activeItem].img} />
+            <Serif $size={1.5} $color="white">{doces[activeItem].text}</Serif>
+            <a href={doces[activeItem].link} target="_blank">
+              <Button $color="white" $text={text.cor}>{text.textbutton}</Button>
+            </a>
+          </Info>
+          <InfoMobile>
+            <Sair onClick={() => setActiveItem(null)}>✖</Sair>
+            <Cursive $size={2} $color="white">{doces[activeItem].title}</Cursive>
+            <Moldura $img={doces[activeItem].img} />
+            <Serif $size={1.5} $color="white">{doces[activeItem].text}</Serif>
+            <a href={doces[activeItem].link} target="_blank">
+              <Button $color="white" $text={text.cor}>{text.textbutton}</Button>
+            </a>
+          </InfoMobile>
         </>
       )}
 
@@ -449,15 +447,15 @@ const scrollLeft = () => {
         </LogoDiv>
       </HeaderDiv>
 
-    <ScrollWrapper $width={width}>
-      {!mobile &&(<Arrow onClick={scrollLeft}>⟨</Arrow>)}
-      <ScrollItems ref={scrollRef}>
-        {listaDuplicada.map((doce, index) => (
-          <Item key={index} $img={doce.img} onClick={() => setActiveItem(doce.id)} />
-        ))}
-      </ScrollItems>
-      {!mobile &&(<Arrow onClick={scrollRight}>⟩</Arrow>)}
-    </ScrollWrapper>
+      <ScrollWrapper $width={width}>
+        {!mobile && (<Arrow onClick={scrollLeft}>⟨</Arrow>)}
+        <ScrollItems ref={scrollRef}>
+          {listaDuplicada.map((doce, index) => (
+            <Item key={index} $img={doce.img} onClick={() => setActiveItem(doce.id)} />
+          ))}
+        </ScrollItems>
+        {!mobile && (<Arrow onClick={scrollRight}>⟩</Arrow>)}
+      </ScrollWrapper>
 
       <ContactInfo $width={width}>
         <LogoWrapper $size={1}>
