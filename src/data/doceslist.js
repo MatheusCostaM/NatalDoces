@@ -68,7 +68,7 @@ export const text = {
 
 export const socialContact = [
     {
-        link: "https://wa.me/5511987313427",
+        link: "https://www.instagram.com/docesby_vic?igsh=MXZwMDk4bnoyYnMycw==",
         img: "/insta.svg"
     },
     {
@@ -80,6 +80,6 @@ export const socialContact = [
         img: "/whats.svg"
     },
     {
-        link: "https://wa.me/5511987313427",
+        link: "https://www.tiktok.com/@docesbyvic?_r=1&_t=ZS-91wzYF1wzVo",
         img: "/tiktok.svg"
     }];
